@@ -124,20 +124,19 @@ exports.requestPasswordReset = async (payload) => {
         if (!user) throw createError(400, 'User not found');
 
         const resetToken = crypto.randomBytes(32).toString('hex');
-        const { otp, otpExpiresAt } = generateOTP();
 
-        await Users.findOneAndUpdate({ email }, { $set: { resetToken, otp, otpExpiresAt } });
+        await Users.findOneAndUpdate({ email }, { $set: { resetToken } });
+        const resetUrl = `${process?.env?.FRONTEND_URL}/password-reset?token=${resetToken}&email=${email}&action=reset`;
 
-        const resetUrl = `${process?.env?.FRONTEND_URL}/reset-password?token=${resetToken}`;
         await sendEmail(
             email,
-            'Your Password Reset OTP',
-            `<p>Your OTP is <b>${otp}</b> for password reset. It will expire in 10 minutes.</p>`,
+            'Your Password Reset URL',
+            `<p>Click <a href="${resetUrl}">here</a> to reset your password.</p>`,
         );
 
         return {
             message: 'Password reset instructions sent',
-            data: process?.env?.NODE_ENV === 'development' ? { resetUrl, otp } : {},
+            data: process?.env?.NODE_ENV === 'development' ? { url: resetUrl, otp } : {},
             statusCode: 200,
             success: true,
         };
@@ -150,9 +149,9 @@ exports.requestPasswordReset = async (payload) => {
 // Reset Password
 exports.resetPassword = async (payload) => {
     try {
-        const { otp, newPassword, confirmPassword, email } = payload?.body || {};
+        const { newPassword, confirmPassword, email } = payload?.body || {};
         const { token } = payload?.query || {};
-        validateFields({ token, otp, newPassword, confirmPassword });
+        validateFields({ token, newPassword, confirmPassword });
 
         if (newPassword !== confirmPassword) throw createError(400, 'Passwords do not match');
 
@@ -165,17 +164,14 @@ exports.resetPassword = async (payload) => {
         }
 
         const user = await Users.findOne({ resetToken: token });
-        if (!user || !user.otp || !user.otpExpiresAt) throw createError(400, 'Invalid reset request');
-
-        if (Date.now() > user.otpExpiresAt) throw createError(400, 'OTP has expired');
-        if (user.otp != parseInt(otp)) throw createError(400, 'Invalid OTP');
+        if (!user) throw createError(400, 'Invalid reset request');
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         await Users.findOneAndUpdate(
             { email: user.email },
             {
                 $set: { password: hashedPassword },
-                $unset: { resetToken: 1, otp: 1, otpExpiresAt: 1 },
+                $unset: { resetToken: 1 },
             },
         );
 
