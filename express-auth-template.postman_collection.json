@@ -23,15 +23,9 @@
                 "url": {
                     "raw": "http://localhost:3001/api/auth/register",
                     "protocol": "http",
-                    "host": [
-                        "localhost"
-                    ],
+                    "host": ["localhost"],
                     "port": "3001",
-                    "path": [
-                        "api",
-                        "auth",
-                        "register"
-                    ]
+                    "path": ["api", "auth", "register"]
                 }
             }
         },
@@ -52,15 +46,9 @@
                 "url": {
                     "raw": "http://localhost:3001/api/auth/login",
                     "protocol": "http",
-                    "host": [
-                        "localhost"
-                    ],
+                    "host": ["localhost"],
                     "port": "3001",
-                    "path": [
-                        "api",
-                        "auth",
-                        "login"
-                    ]
+                    "path": ["api", "auth", "login"]
                 }
             }
         },
@@ -81,15 +69,9 @@
                 "url": {
                     "raw": "http://localhost:3001/api/auth/verify-otp",
                     "protocol": "http",
-                    "host": [
-                        "localhost"
-                    ],
+                    "host": ["localhost"],
                     "port": "3001",
-                    "path": [
-                        "api",
-                        "auth",
-                        "verify-otp"
-                    ]
+                    "path": ["api", "auth", "verify-otp"]
                 }
             }
         },
@@ -106,15 +88,9 @@
                 "url": {
                     "raw": "http://localhost:3001/api/auth/logout",
                     "protocol": "http",
-                    "host": [
-                        "localhost"
-                    ],
+                    "host": ["localhost"],
                     "port": "3001",
-                    "path": [
-                        "api",
-                        "auth",
-                        "logout"
-                    ]
+                    "path": ["api", "auth", "logout"]
                 }
             }
         },
@@ -135,15 +111,9 @@
                 "url": {
                     "raw": "http://localhost:3001/api/auth/request-password-reset",
                     "protocol": "http",
-                    "host": [
-                        "localhost"
-                    ],
+                    "host": ["localhost"],
                     "port": "3001",
-                    "path": [
-                        "api",
-                        "auth",
-                        "request-password-reset"
-                    ]
+                    "path": ["api", "auth", "request-password-reset"]
                 }
             }
         },
@@ -164,15 +134,9 @@
                 "url": {
                     "raw": "http://localhost:3001/api/auth/reset-password",
                     "protocol": "http",
-                    "host": [
-                        "localhost"
-                    ],
+                    "host": ["localhost"],
                     "port": "3001",
-                    "path": [
-                        "api",
-                        "auth",
-                        "reset-password"
-                    ]
+                    "path": ["api", "auth", "reset-password"]
                 }
             }
         },
@@ -184,15 +148,9 @@
                 "url": {
                     "raw": "http://localhost:3001/api/health/ping",
                     "protocol": "http",
-                    "host": [
-                        "localhost"
-                    ],
+                    "host": ["localhost"],
                     "port": "3001",
-                    "path": [
-                        "api",
-                        "health",
-                        "ping"
-                    ]
+                    "path": ["api", "health", "ping"]
                 }
             }
         }

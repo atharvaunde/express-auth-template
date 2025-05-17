@@ -1,3 +1,4 @@
 #!/bin/sh
-yarn format
+yarn format && git add .
+
 

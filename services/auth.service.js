@@ -6,8 +6,12 @@ const { promisify } = require('util');
 const { sendEmail } = require('../utils/mailer');
 
 const validateFields = (fields) => {
-    for (const [key, value] of Object.entries(fields)) {
-        if (!value) throw createError(400, `${key} is required`);
+    const missing = Object.entries(fields)
+        .filter(([_, value]) => !value)
+        .map(([key]) => key);
+
+    if (missing.length) {
+        throw createError(400, `${missing.join(', ')} ${missing.length === 1 ? 'is' : 'are'} required`);
     }
 };
 
@@ -55,7 +59,7 @@ exports.loginUser = async (payload) => {
 
         return {
             message: 'OTP sent successfully',
-            data: process.env.NODE_ENV === 'development' ? { otp, otpExpiresAt } : {},
+            data: process?.env?.NODE_ENV === 'development' ? { otp, otpExpiresAt } : {},
             statusCode: 200,
             success: true,
         };
@@ -73,14 +77,14 @@ exports.verifyOTP = async (payload) => {
 
         const user = await Users.findOne({ email }).lean();
 
-        if (!user || !user.otp || !user.otpExpiresAt) throw createError(400, 'Invalid OTP request');
+        if (!user || !user?.otp || !user?.otpExpiresAt) throw createError(400, 'Invalid OTP request');
 
-        if (Date.now() > user.otpExpiresAt) throw createError(400, 'OTP has expired');
-        if (parseInt(user.otp) !== parseInt(otp)) throw createError(400, 'Invalid OTP');
+        if (Date.now() > user?.otpExpiresAt) throw createError(400, 'OTP has expired');
+        if (parseInt(user?.otp) !== parseInt(otp)) throw createError(400, 'Invalid OTP');
 
         await Users.findOneAndUpdate({ email }, { $unset: { otp: 1, otpExpiresAt: 1 } });
 
-        const sessionUser = { id: user._id, email: user.email, name: user.name };
+        const sessionUser = { id: user?._id, email: user?.email, name: user?.name };
         payload.session.user = sessionUser;
 
         return {
@@ -98,7 +102,7 @@ exports.verifyOTP = async (payload) => {
 // Logout
 exports.logoutUser = async (payload) => {
     try {
-        await promisify(payload.session.destroy).bind(payload.session)();
+        await promisify(payload?.session?.destroy).bind(payload?.session)();
         return {
             message: 'Logged out successfully',
             statusCode: 200,
@@ -124,7 +128,7 @@ exports.requestPasswordReset = async (payload) => {
 
         await Users.findOneAndUpdate({ email }, { $set: { resetToken, otp, otpExpiresAt } });
 
-        const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+        const resetUrl = `${process?.env?.FRONTEND_URL}/reset-password?token=${resetToken}`;
         await sendEmail(
             email,
             'Your Password Reset OTP',
@@ -133,7 +137,7 @@ exports.requestPasswordReset = async (payload) => {
 
         return {
             message: 'Password reset instructions sent',
-            data: process.env.NODE_ENV === 'development' ? { resetUrl, otp } : {},
+            data: process?.env?.NODE_ENV === 'development' ? { resetUrl, otp } : {},
             statusCode: 200,
             success: true,
         };
@@ -176,7 +180,7 @@ exports.resetPassword = async (payload) => {
         );
 
         if (payload?.req?.session) {
-            await promisify(payload.session.destroy).bind(payload.session)();
+            await promisify(payload?.session?.destroy).bind(payload?.session)();
         }
 
         await sendEmail(
