@@ -12,6 +12,10 @@ const transporter = nodemailer.createTransport({
 
 const sendEmail = async (to, subject, html) => {
     try {
+        if (process.env.NODE_ENV === 'development') {
+            console.log('Email sent in development mode');
+            return;
+        }
         const info = await transporter.sendMail({
             from: `"Your App" <${process.env.EMAIL_FROM}>`,
             to,

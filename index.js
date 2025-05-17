@@ -7,6 +7,7 @@ const app = express();
 
 require('./routers/middlewares/global')(app);
 require('./routers/index')(app);
+app.use(require('./routers/middlewares/error'))
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

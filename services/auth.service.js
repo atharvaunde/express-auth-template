@@ -49,7 +49,7 @@ exports.loginUser = async (payload) => {
         if (!user) throw createError(400, 'Invalid email or password');
 
         const { otp, otpExpiresAt } = generateOTP();
-        await Users.updateOne({ email }, { $set: { otp, otpExpiresAt } });
+        await Users.findOneAndUpdate({ email }, { $set: { otp, otpExpiresAt } });
 
         await sendEmail(email, 'Your Login OTP', `<p>Your OTP is <b>${otp}</b>. It will expire in 10 minutes.</p>`);
 
@@ -71,16 +71,17 @@ exports.verifyOTP = async (payload) => {
         const { email, otp } = payload?.body || {};
         validateFields({ email, otp });
 
-        const user = await Users.findOne({ email });
+        const user = await Users.findOne({ email }).lean();
+
         if (!user || !user.otp || !user.otpExpiresAt) throw createError(400, 'Invalid OTP request');
 
         if (Date.now() > user.otpExpiresAt) throw createError(400, 'OTP has expired');
-        if (user.otp !== parseInt(otp)) throw createError(400, 'Invalid OTP');
+        if (parseInt(user.otp) !== parseInt(otp)) throw createError(400, 'Invalid OTP');
 
-        await Users.updateOne({ email }, { $unset: { otp: 1, otpExpiresAt: 1 } });
+        await Users.findOneAndUpdate({ email }, { $unset: { otp: 1, otpExpiresAt: 1 } });
 
         const sessionUser = { id: user._id, email: user.email, name: user.name };
-        payload.req.session.user = sessionUser;
+        payload.session.user = sessionUser;
 
         return {
             message: 'OTP verified successfully',
@@ -97,7 +98,7 @@ exports.verifyOTP = async (payload) => {
 // Logout
 exports.logoutUser = async (payload) => {
     try {
-        await promisify(payload.req.session.destroy).bind(payload.req.session)();
+        await promisify(payload.session.destroy).bind(payload.session)();
         return {
             message: 'Logged out successfully',
             statusCode: 200,
@@ -121,7 +122,7 @@ exports.requestPasswordReset = async (payload) => {
         const resetToken = crypto.randomBytes(32).toString('hex');
         const { otp, otpExpiresAt } = generateOTP();
 
-        await Users.updateOne({ email }, { $set: { resetToken, otp, otpExpiresAt } });
+        await Users.findOneAndUpdate({ email }, { $set: { resetToken, otp, otpExpiresAt } });
 
         const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
         await sendEmail(
@@ -145,7 +146,8 @@ exports.requestPasswordReset = async (payload) => {
 // Reset Password
 exports.resetPassword = async (payload) => {
     try {
-        const { token, otp, newPassword, confirmPassword } = payload?.body || {};
+        const { otp, newPassword, confirmPassword, email } = payload?.body || {};
+        const { token } = payload?.query || {};
         validateFields({ token, otp, newPassword, confirmPassword });
 
         if (newPassword !== confirmPassword) throw createError(400, 'Passwords do not match');
@@ -165,7 +167,7 @@ exports.resetPassword = async (payload) => {
         if (user.otp != parseInt(otp)) throw createError(400, 'Invalid OTP');
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
-        await Users.updateOne(
+        await Users.findOneAndUpdate(
             { email: user.email },
             {
                 $set: { password: hashedPassword },
@@ -173,8 +175,8 @@ exports.resetPassword = async (payload) => {
             },
         );
 
-        if (payload.req.session) {
-            await promisify(payload.req.session.destroy).bind(payload.req.session)();
+        if (payload?.req?.session) {
+            await promisify(payload.session.destroy).bind(payload.session)();
         }
 
         await sendEmail(

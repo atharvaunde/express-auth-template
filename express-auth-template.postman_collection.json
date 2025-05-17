@@ -1,0 +1,200 @@
+{
+    "info": {
+        "_postman_id": "b1e2c3d4-5678-1234-9abc-def012345678",
+        "name": "Express Auth Template API",
+        "description": "Postman collection for Express Auth Template API.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Register",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
+                },
+                "url": {
+                    "raw": "http://localhost:3001/api/auth/register",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "3001",
+                    "path": [
+                        "api",
+                        "auth",
+                        "register"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Login",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
+                },
+                "url": {
+                    "raw": "http://localhost:3001/api/auth/login",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "3001",
+                    "path": [
+                        "api",
+                        "auth",
+                        "login"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Verify OTP",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"email\": \"user@example.com\",\n  \"otp\": \"123456\"\n}"
+                },
+                "url": {
+                    "raw": "http://localhost:3001/api/auth/verify-otp",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "3001",
+                    "path": [
+                        "api",
+                        "auth",
+                        "verify-otp"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Logout",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "http://localhost:3001/api/auth/logout",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "3001",
+                    "path": [
+                        "api",
+                        "auth",
+                        "logout"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Request Password Reset",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"email\": \"user@example.com\"\n}"
+                },
+                "url": {
+                    "raw": "http://localhost:3001/api/auth/request-password-reset",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "3001",
+                    "path": [
+                        "api",
+                        "auth",
+                        "request-password-reset"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Reset Password",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"email\": \"user@example.com\",\n  \"otp\": \"123456\",\n  \"newPassword\": \"newpassword123\"\n}"
+                },
+                "url": {
+                    "raw": "http://localhost:3001/api/auth/reset-password",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "3001",
+                    "path": [
+                        "api",
+                        "auth",
+                        "reset-password"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Health Check",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:3001/api/health/ping",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "3001",
+                    "path": [
+                        "api",
+                        "health",
+                        "ping"
+                    ]
+                }
+            }
+        }
+    ]
+}
