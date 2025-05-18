@@ -55,6 +55,9 @@ exports.loginUser = async (payload) => {
         const { otp, otpExpiresAt } = generateOTP();
         await Users.findOneAndUpdate({ email }, { $set: { otp, otpExpiresAt } });
 
+        const passwordMatch = await bcrypt.compare(password, user?.password);
+        if (!passwordMatch) throw createError(400, 'Invalid email or password');
+
         await sendEmail(email, 'Your Login OTP', `<p>Your OTP is <b>${otp}</b>. It will expire in 10 minutes.</p>`);
 
         return {
